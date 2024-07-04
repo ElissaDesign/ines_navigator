@@ -1,70 +1,107 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { useState } from "react";
+import { Dimensions, Image, ScrollView, StyleSheet, View } from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { Text } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const WIDTH = Dimensions.get("window").width;
+const HEIGHT = Dimensions.get("window").height;
 
 export default function HomeScreen() {
+  const [imageActive, setImageActive] = useState(0);
+  const images = [
+    "https://cdn.pixabay.com/photo/2023/06/18/13/40/cinquefoil-8072071_1280.jpg",
+    "https://cdn.pixabay.com/photo/2023/06/22/03/58/animals-8080446_1280.jpg",
+    "https://cdn.pixabay.com/photo/2023/05/22/14/49/dandelion-8010882_1280.jpg",
+    "https://cdn.pixabay.com/photo/2023/06/21/09/52/pied-flycatcher-8078925_1280.jpg",
+    "https://cdn.pixabay.com/photo/2023/06/20/09/47/woman-8076569_1280.jpg",
+  ];
+
+  const onchange: any = (nativeEvent: any) => {
+    if (nativeEvent) {
+      const slide = Math.ceil(
+        nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width
+      );
+      if (slide != imageActive) {
+        setImageActive(slide);
+      }
+    }
+  };
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
+    <SafeAreaView className="h-screen bg-[#F5F9FC]">
+      <View className="flex flex-row items-center justify-center my-14 ">
+        <View>
+          <Text className="text-2xl font-bold text-center text-black">
+            Ines Guiding Assistant
+          </Text>
+          <Text className="text-base text-black font-normal text-center my-10">
+            Hello, this is Bing. Lorem ipsum is a placeholder or dummy text used
+            in typesetting and graphic design for previewing layouts12. It
+            features scrambled Latin text, which emphasizes the design over
+            content of the layout1. It is the standard placeholder text of the
+            printing and publishing industries
+          </Text>
+
+          {/* <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </ThemedView> */}
+
+          <View className="bg-[#DCEBF5]">
+            <ScrollView
+              onScroll={({ nativeEvent }) => onchange(nativeEvent)}
+              showsHorizontalScrollIndicator={false}
+              pagingEnabled
+              horizontal
+              style={styles.wrap}
+            >
+              {images.map((image, index) => (
+                <Image
+                  key={image}
+                  style={{
+                    width: 411,
+                    height: 300,
+                    marginRight: 4,
+                  }}
+                  resizeMode="contain"
+                  source={{ uri: image }}
+                />
+              ))}
+            </ScrollView>
+            <View style={styles.wrapDot}>
+              {images.map((e, index) => (
+                <Text
+                  key={e}
+                  style={imageActive == index ? styles.dotActive : styles.dot}
+                >
+                  ●
+                </Text>
+              ))}
+            </View>
+          </View>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  wrap: {
+    width: WIDTH,
+    // height: HEIGHT * 2.5,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
+  wrapDot: {
+    position: "absolute",
     bottom: 0,
-    left: 0,
-    position: 'absolute',
+    flexDirection: "row",
+    alignSelf: "center",
+  },
+  dotActive: {
+    margin: 3,
+    color: "black",
+  },
+  dot: {
+    margin: 3,
+    color: "#BBB",
   },
 });
